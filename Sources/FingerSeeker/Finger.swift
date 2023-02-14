@@ -7,3 +7,19 @@ extension CGRect: Hashable {
         hasher.combine(minY)
     }
 }
+
+@available(macOS 11, iOS 14, *)
+public extension View {
+    @ViewBuilder func finger(_ seeker: Binding<FingerSeeker>, _ tag: String) -> some View {
+        self
+            .background(
+                GeometryReader { (geometry) -> Color in
+                    let rect = geometry.frame(in: .global)
+                    DispatchQueue.main.async {
+                        seeker.seeker.wrappedValue[rect] = tag
+                    }
+                    return .clear
+                }
+            )
+    }
+}
