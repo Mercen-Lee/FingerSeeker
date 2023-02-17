@@ -3,7 +3,7 @@
 FingerSeeker is Finger-seeking SwiftUI Library
 
 ## Usage
-```
+```swift
 struct ContentView: View {
 
     @State var seeker = FingerSeeker()
