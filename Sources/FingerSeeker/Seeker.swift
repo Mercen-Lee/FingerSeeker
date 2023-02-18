@@ -13,15 +13,19 @@ public struct FingerSeeker {
 
 @available(macOS 11, iOS 14, *)
 public struct Seeker<Content: View>: View {
-
+    
     public let content: Content
     @Binding public var seeker: FingerSeeker
     
+    public var seekEnd: (FingerSeeker) -> Void?
+    
     public init(_ seeker: Binding<FingerSeeker>,
+                seekEnd: @escaping (FingerSeeker) -> Void = { _ in },
                 @ViewBuilder content: () -> Content)
     {
         self._seeker = seeker
         self.content = content()
+        self.seekEnd = seekEnd
     }
     
     public var body: some View {
@@ -41,10 +45,24 @@ public struct Seeker<Content: View>: View {
                         .onEnded { dragGesture in
                             DispatchQueue.main.async {
                                 seeker.finger = nil
+                                seekEnd(seeker)
                             }
                         }
                 )
             content
+        }
+    }
+}
+
+// MARK: - Function Extensions of Seeker
+@available(macOS 11, iOS 14, *)
+public extension Seeker {
+    
+    // MARK: - Disabled Function
+    func seekEnded(_ action: @escaping (FingerSeeker) -> Void) -> Seeker {
+        Seeker(self._seeker,
+               seekEnd: action) {
+            self.content
         }
     }
 }
