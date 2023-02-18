@@ -26,7 +26,6 @@ public struct Seeker<Content: View>: View {
     
     public var body: some View {
         ZStack {
-            content
             Color.black.opacity(0.000000001)
                 .gesture(
                     DragGesture(minimumDistance: 2, coordinateSpace: .global)
@@ -45,6 +44,7 @@ public struct Seeker<Content: View>: View {
                             }
                         }
                 )
+            content
         }
     }
 }
