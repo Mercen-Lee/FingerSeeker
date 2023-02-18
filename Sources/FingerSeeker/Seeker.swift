@@ -2,7 +2,7 @@ import SwiftUI
 
 @available(macOS 11, iOS 14, *)
 public struct FingerSeeker {
-    public init(_ seeker: [CGRect: String] = [CGRect.zero: String()],
+    public init(_ seeker: [CGRect: String] = [CGRect: String](),
                 _ finger: String? = nil) {
         self.seeker = seeker
         self.finger = finger
@@ -25,23 +25,26 @@ public struct Seeker<Content: View>: View {
     }
     
     public var body: some View {
-        content
-            .gesture(
-                DragGesture(minimumDistance: 2, coordinateSpace: .global)
-                    .onChanged { dragGesture in
-                        for key in seeker.seeker.keys {
-                            if key.contains(dragGesture.location) {
-                                seeker.finger = seeker.seeker[key]
-                            } else {
+        ZStack {
+            content
+            Color.black.opacity(0.000000001)
+                .gesture(
+                    DragGesture(minimumDistance: 2, coordinateSpace: .global)
+                        .onChanged { dragGesture in
+                            for key in seeker.seeker.keys {
+                                if key.contains(dragGesture.location) {
+                                    seeker.finger = seeker.seeker[key]
+                                } else {
+                                    seeker.finger = nil
+                                }
+                            }
+                        }
+                        .onEnded { dragGesture in
+                            DispatchQueue.main.async {
                                 seeker.finger = nil
                             }
                         }
-                    }
-                    .onEnded { dragGesture in
-                        DispatchQueue.main.async {
-                            seeker.finger = nil
-                        }
-                    }
-            )
+                )
+        }
     }
 }
