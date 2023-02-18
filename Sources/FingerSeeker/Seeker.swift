@@ -2,8 +2,13 @@ import SwiftUI
 
 @available(macOS 11, iOS 14, *)
 public struct FingerSeeker {
-    public var seeker: [CGRect: String] = [CGRect.zero: String()]
-    public var finger: String? = nil
+    public init(_ seeker: [CGRect: String] = [CGRect.zero: String()],
+                _ finger: String? = nil) {
+        self.seeker = seeker
+        self.finger = finger
+    }
+    public var seeker: [CGRect: String]
+    public var finger: String?
 }
 
 @available(macOS 11, iOS 14, *)
