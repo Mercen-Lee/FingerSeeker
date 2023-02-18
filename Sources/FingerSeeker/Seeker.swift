@@ -32,7 +32,7 @@ public struct Seeker<Content: View>: View {
         ZStack {
             Color.black.opacity(0.000000001)
                 .gesture(
-                    DragGesture(minimumDistance: 2, coordinateSpace: .global)
+                    DragGesture(minimumDistance: 0, coordinateSpace: .global)
                         .onChanged { dragGesture in
                             for key in seeker.seeker.keys {
                                 if key.contains(dragGesture.location) {
