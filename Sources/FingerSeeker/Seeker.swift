@@ -1,29 +1,29 @@
 import SwiftUI
 
 @available(macOS 11, iOS 14, *)
-public struct FingerSeeker {
+public class FingerSeeker: ObservableObject {
     public init(_ seeker: [CGRect: String] = [CGRect: String](),
                 _ finger: String? = nil) {
         self.seeker = seeker
         self.finger = finger
     }
-    public var seeker: [CGRect: String]
-    public var finger: String?
+    @Published public var seeker: [CGRect: String]
+    @Published public var finger: String?
 }
 
 @available(macOS 11, iOS 14, *)
 public struct Seeker<Content: View>: View {
     
+    @StateObject public var seeker = FingerSeeker()
+    @Binding public var finger: String?
     public let content: Content
-    @Binding public var seeker: FingerSeeker
-    
-    public var seekEnd: (FingerSeeker) -> Void?
-    
-    public init(_ seeker: Binding<FingerSeeker>,
-                seekEnd: @escaping (FingerSeeker) -> Void = { _ in },
+    public var seekEnd: (String?) -> Void?
+
+    public init(_ finger: Binding<String?> = Binding.constant(nil),
+                seekEnd: @escaping (String?) -> Void = { _ in },
                 @ViewBuilder content: () -> Content)
     {
-        self._seeker = seeker
+        self._finger = finger
         self.content = content()
         self.seekEnd = seekEnd
     }
@@ -40,28 +40,27 @@ public struct Seeker<Content: View>: View {
                                 } else {
                                     seeker.finger = nil
                                 }
+                                finger = seeker.finger
                             }
                         }
                         .onEnded { dragGesture in
                             DispatchQueue.main.async {
+                                seekEnd(seeker.finger)
                                 seeker.finger = nil
-                                seekEnd(seeker)
+                                finger = seeker.finger
                             }
                         }
                 )
             content
+                .environmentObject(seeker)
         }
     }
 }
 
-// MARK: - Function Extensions of Seeker
 @available(macOS 11, iOS 14, *)
 public extension Seeker {
-    
-    // MARK: - Disabled Function
-    func seekEnded(_ action: @escaping (FingerSeeker) -> Void) -> Seeker {
-        Seeker(self._seeker,
-               seekEnd: action) {
+    func seekEnded(_ action: @escaping (String?) -> Void) -> Seeker {
+        Seeker(self._finger, seekEnd: action) {
             self.content
         }
     }

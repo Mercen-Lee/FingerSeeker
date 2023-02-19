@@ -6,22 +6,24 @@ FingerSeeker is Finger-seeking SwiftUI Library
 ```swift
 struct ContentView: View {
 
-    @State var seeker = FingerSeeker()
+    @State var currentSeeker: String? = nil
     
     var body: some View {
-        Seeker($seeker) {
+        Seeker($currentSeeker) {
             VStack {
-                Text("Current seeker is \(seeker ?? "none")")
+                Text("Current seeker is \(currentSeeker ?? "none")")
                 Circle()
                     .frame(width: 100, height: 100)
-                    .finger($seeker, "Seeking 1")
+                    .finger("Seeking 1")
                 Circle()
                     .frame(width: 100, height: 100)
-                    .finger($seeker, "Seeking 2")
+                    .finger("Seeking 2")
             }
             .padding(20)
         }
+        .seekEnded { latestSeeker in
+            print(latestSeeker ?? "none")
+        }
     }
 }
-
 ```
